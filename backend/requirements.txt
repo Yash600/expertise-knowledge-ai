@@ -15,8 +15,11 @@ qdrant-client==1.11.0
 langchain-qdrant==0.1.4
 
 # ── Embeddings & Reranker (local, no API key) ─────────────────────────────────
+# CPU-only torch — removes all NVIDIA CUDA packages (~1.5 GB) that are useless
+# on CPU-only servers (Render free tier). Saves ~150 MB runtime RAM vs CUDA build.
+--extra-index-url https://download.pytorch.org/whl/cpu
 sentence-transformers==3.1.1
-torch==2.4.1
+torch==2.4.1+cpu
 transformers>=4.38.0,<4.45.0
 
 # ── Keyword Search ────────────────────────────────────────────────────────────

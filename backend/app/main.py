@@ -82,20 +82,10 @@ async def startup():
     except Exception as e:
         print(f"  LangGraph init failed (non-fatal): {e}")
 
-    # Pre-warm ML models so crashes appear at startup not mid-request
-    try:
-        from app.ingestion.embedder import get_model
-        get_model()
-        print("  Embedding model loaded")
-    except Exception as e:
-        print(f"  Embedding model failed (non-fatal): {e}")
-
-    try:
-        from app.retrieval.reranker import _get_reranker
-        _get_reranker()
-        print("  Reranker model loaded")
-    except Exception as e:
-        print(f"  Reranker model failed (non-fatal): {e}")
+    # NOTE: ML models (embedder, reranker) are NOT pre-loaded at startup.
+    # They load lazily on the first request to keep startup RAM under 512 MB
+    # (Render free tier limit). The models are baked into the Docker image
+    # via the build-time RUN steps, so first-request latency is disk I/O only.
 
     print("API ready.")
 
