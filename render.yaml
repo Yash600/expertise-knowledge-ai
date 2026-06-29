@@ -1,47 +1,48 @@
 services:
   - type: web
-    name: enterprise-knowledge-assistant-api
-    runtime: python
-    region: oregon
+    name: eka-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     plan: free
-    rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    region: singapore        # closest to India; switch to oregon/frankfurt if needed
     healthCheckPath: /health
+
     envVars:
+      # ── Required: set in Render dashboard ─────────────────────────────────
       - key: GROQ_API_KEY
-        sync: false
+        sync: false          # gsk_xxxx
+
       - key: QDRANT_URL
-        sync: false
+        sync: false          # https://xxxx.us-east4-0.gcp.cloud.qdrant.io
+
       - key: QDRANT_API_KEY
-        sync: false
+        sync: false          # from Qdrant Cloud cluster page
+
+      - key: DATABASE_URL
+        sync: false          # postgres://postgres.xxxx:PASSWORD@aws-0-xxx.pooler.supabase.com:5432/postgres
+
+      - key: CLERK_SECRET_KEY
+        sync: false          # sk_live_xxxx
+
+      - key: CLERK_JWKS_URL
+        sync: false          # https://YOUR_DOMAIN.clerk.accounts.dev/.well-known/jwks.json
+
+      - key: ALLOWED_ORIGINS
+        sync: false          # https://your-app.vercel.app (comma-separated if multiple)
+
+      # ── Fixed values ───────────────────────────────────────────────────────
       - key: QDRANT_COLLECTION_NAME
         value: enterprise_docs
-      - key: SUPABASE_DATABASE_URL
-        sync: false
-      - key: CLERK_SECRET_KEY
-        sync: false
-      - key: CLERK_JWT_PUBLIC_KEY
-        sync: false
-      - key: EMBEDDING_MODEL
-        value: BAAI/bge-small-en-v1.5
-      - key: EMBEDDING_DIMENSION
-        value: "384"
-      - key: RERANKER_MODEL
-        value: cross-encoder/ms-marco-MiniLM-L-6-v2
-      - key: CHUNK_SIZE
-        value: "512"
-      - key: CHUNK_OVERLAP
-        value: "100"
-      - key: RETRIEVAL_TOP_K
-        value: "10"
-      - key: RERANKER_TOP_N
-        value: "3"
-      - key: MEMORY_WINDOW
-        value: "6"
-      - key: MULTI_DOC_THRESHOLD
-        value: "3"
+
       - key: ENVIRONMENT
         value: production
-      - key: ALLOWED_ORIGINS
-        sync: false
+
+      - key: OPENBLAS_NUM_THREADS
+        value: "1"
+
+      - key: OMP_NUM_THREADS
+        value: "1"
+
+      - key: TOKENIZERS_PARALLELISM
+        value: "false"
