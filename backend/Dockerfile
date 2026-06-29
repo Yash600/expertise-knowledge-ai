@@ -37,10 +37,9 @@ COPY --from=builder /install /usr/local
 # Copy application source
 COPY . .
 
-# Pre-download ML models at build time so cold starts are fast
-# (runs as part of docker build — cached in image layer)
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-small-en-v1.5')" || true
-RUN python -c "from sentence_transformers import CrossEncoder; CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')" || true
+# Pre-download fastembed model at build time (cached in image layer)
+# fastembed uses ONNX Runtime — no torch/CUDA, ~80 MB RAM at runtime
+RUN python -c "from fastembed import TextEmbedding; TextEmbedding('BAAI/bge-small-en-v1.5')" || true
 
 # Create data directory for eval results
 RUN mkdir -p data results

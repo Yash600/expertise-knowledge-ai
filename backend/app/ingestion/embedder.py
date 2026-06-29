@@ -1,15 +1,16 @@
 """
 embedder.py — Generate embeddings with BAAI/bge-small-en-v1.5 and upsert to Qdrant.
 
-- Model runs locally (downloaded once via HuggingFace cache).
+Uses fastembed (ONNX Runtime) instead of sentence-transformers/torch.
+- ~80 MB RAM vs ~350 MB for torch — fits Render free tier (512 MB)
+- Same BGE model weights, identical 384-dim output vectors
 - Batches embeddings in groups of 64 to stay within memory limits.
-- Upserts to Qdrant with full metadata payload for filtering.
-- Collection is created automatically if it doesn't exist.
 """
 
 from __future__ import annotations
 
 import os
+import uuid
 from typing import List, Dict, Any
 
 from dotenv import load_dotenv
@@ -20,7 +21,6 @@ from qdrant_client.models import (
     PointStruct,
     PayloadSchemaType,
 )
-from sentence_transformers import SentenceTransformer
 
 load_dotenv()
 
@@ -30,15 +30,16 @@ COLLECTION = os.getenv("QDRANT_COLLECTION_NAME", "enterprise_docs")
 BATCH_SIZE = 64
 
 # ── Singletons (lazy init) ────────────────────────────────────────────────────
-_model: SentenceTransformer | None = None
+_model = None
 _client: QdrantClient | None = None
 
 
-def get_model() -> SentenceTransformer:
+def get_model():
     global _model
     if _model is None:
-        print(f"  Loading embedding model: {EMBEDDING_MODEL}")
-        _model = SentenceTransformer(EMBEDDING_MODEL)
+        from fastembed import TextEmbedding
+        print(f"  Loading embedding model (fastembed): {EMBEDDING_MODEL}")
+        _model = TextEmbedding(model_name=EMBEDDING_MODEL)
     return _model
 
 
@@ -51,6 +52,12 @@ def get_client() -> QdrantClient:
     return _client
 
 
+def _embed_texts(texts: List[str]) -> List[List[float]]:
+    """Embed a list of texts, returning list of float vectors."""
+    model = get_model()
+    return [vec.tolist() for vec in model.embed(texts)]
+
+
 def ensure_collection() -> None:
     """Create Qdrant collection if it doesn't exist."""
     client = get_client()
@@ -60,7 +67,6 @@ def ensure_collection() -> None:
             collection_name=COLLECTION,
             vectors_config=VectorParams(size=EMBEDDING_DIM, distance=Distance.COSINE),
         )
-        # Index payload fields for fast filtering
         client.create_payload_index(COLLECTION, "filename", PayloadSchemaType.KEYWORD)
         client.create_payload_index(COLLECTION, "doc_id", PayloadSchemaType.KEYWORD)
         client.create_payload_index(COLLECTION, "page", PayloadSchemaType.INTEGER)
@@ -70,21 +76,15 @@ def ensure_collection() -> None:
 
 
 def embed_summary(doc_id: str, filename: str, summary_text: str) -> None:
-    """
-    Embed and upsert a single document-level summary chunk.
-    Tagged with chunk_type='summary' for targeted retrieval.
-    """
-    import uuid
-    model = get_model()
+    """Embed and upsert a single document-level summary chunk."""
     client = get_client()
     ensure_collection()
 
+    # BGE retrieval prefix
     prefixed = f"Represent this document for retrieval: {summary_text}"
-    vector = model.encode(prefixed, normalize_embeddings=True).tolist()
+    vector = _embed_texts([prefixed])[0]
 
-    # Deterministic ID so re-ingesting overwrites the old summary
     summary_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"summary:{doc_id}"))
-    # Qdrant expects integer or UUID — use int hash of the UUID
     point_id = str(uuid.UUID(summary_id))
 
     point = PointStruct(
@@ -103,14 +103,10 @@ def embed_summary(doc_id: str, filename: str, summary_text: str) -> None:
 
 
 def embed_and_upsert(chunks: List[Dict[str, Any]]) -> int:
-    """
-    Embed chunks and upsert to Qdrant.
-    Returns total number of points upserted.
-    """
+    """Embed chunks and upsert to Qdrant. Returns total points upserted."""
     if not chunks:
         return 0
 
-    model = get_model()
     client = get_client()
     ensure_collection()
 
@@ -121,9 +117,8 @@ def embed_and_upsert(chunks: List[Dict[str, Any]]) -> int:
         batch_chunks = chunks[i: i + BATCH_SIZE]
         batch_texts = texts[i: i + BATCH_SIZE]
 
-        # BGE models benefit from a query prefix — use doc prefix for indexing
         prefixed = [f"Represent this document for retrieval: {t}" for t in batch_texts]
-        vectors = model.encode(prefixed, normalize_embeddings=True).tolist()
+        vectors = _embed_texts(prefixed)
 
         points = [
             PointStruct(
