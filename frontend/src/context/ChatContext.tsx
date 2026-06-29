@@ -4,11 +4,14 @@ import { createContext, useContext, useState, useCallback } from "react";
 import { api, type SessionSummary } from "@/lib/api";
 
 export interface ChatMessage {
+  id?: string;
   role: "user" | "assistant";
   content: string;
   sources?: any[];
   confidence?: number;
   reasoning_mode?: string;
+  response?: any;
+  timestamp?: Date;
 }
 
 interface ChatContextValue {
