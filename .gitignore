@@ -1,0 +1,61 @@
+# ── Environment ───────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.production
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# ── ML Models (downloaded at runtime, not committed) ──────────────────────────
+backend/models/
+*.bin
+*.safetensors
+*.onnx
+
+# ── Databases (local dev only) ────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Vector Store (local dev only) ─────────────────────────────────────────────
+backend/chroma_db/
+backend/qdrant_local/
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Node / Next.js ────────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.vercel/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Evaluation outputs (keep results.json, ignore raw runs) ───────────────────
+backend/evaluation/raw_runs/
+
+# ── Uploaded documents (sample docs committed, user uploads not) ──────────────
+backend/data/uploads/

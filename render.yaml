@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: enterprise-knowledge-assistant-api
+    runtime: python
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: QDRANT_COLLECTION_NAME
+        value: enterprise_docs
+      - key: SUPABASE_DATABASE_URL
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: CLERK_JWT_PUBLIC_KEY
+        sync: false
+      - key: EMBEDDING_MODEL
+        value: BAAI/bge-small-en-v1.5
+      - key: EMBEDDING_DIMENSION
+        value: "384"
+      - key: RERANKER_MODEL
+        value: cross-encoder/ms-marco-MiniLM-L-6-v2
+      - key: CHUNK_SIZE
+        value: "512"
+      - key: CHUNK_OVERLAP
+        value: "100"
+      - key: RETRIEVAL_TOP_K
+        value: "10"
+      - key: RERANKER_TOP_N
+        value: "3"
+      - key: MEMORY_WINDOW
+        value: "6"
+      - key: MULTI_DOC_THRESHOLD
+        value: "3"
+      - key: ENVIRONMENT
+        value: production
+      - key: ALLOWED_ORIGINS
+        sync: false

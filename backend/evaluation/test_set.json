@@ -1,0 +1,122 @@
+[
+  {
+    "id": "hr_001",
+    "source_doc": "HR_Policy.pdf",
+    "question": "How many paid leave days does a TechCorp employee get per year?",
+    "ground_truth": "Every TechCorp employee receives 24 paid leave days per calendar year."
+  },
+  {
+    "id": "hr_002",
+    "source_doc": "HR_Policy.pdf",
+    "question": "How many weeks of maternity leave is a female employee entitled to?",
+    "ground_truth": "Female employees are entitled to 26 weeks (182 days) of paid maternity leave per the Maternity Benefit Act."
+  },
+  {
+    "id": "hr_003",
+    "source_doc": "HR_Policy.pdf",
+    "question": "What is the notice period for a senior-level employee at TechCorp?",
+    "ground_truth": "Senior roles (L6+) have a 90-day notice period. Mid-level employees (L3-L5) have a 60-day notice period."
+  },
+  {
+    "id": "hr_004",
+    "source_doc": "HR_Policy.pdf",
+    "question": "How many days can an employee work from home per week?",
+    "ground_truth": "Employees may work from home up to 3 days per week, subject to team and project requirements."
+  },
+  {
+    "id": "hr_005",
+    "source_doc": "HR_Policy.pdf",
+    "question": "How many sick leave days are provided per year and when is a medical certificate required?",
+    "ground_truth": "Employees receive 12 sick leave days per year. A medical certificate from a registered practitioner is required for absences exceeding 2 consecutive days."
+  },
+  {
+    "id": "product_001",
+    "source_doc": "Product_Guide.pdf",
+    "question": "How many users are allowed on the Business plan?",
+    "ground_truth": "The Business plan at $99/month allows up to 50 users."
+  },
+  {
+    "id": "product_002",
+    "source_doc": "Product_Guide.pdf",
+    "question": "What is the storage limit on the Starter plan?",
+    "ground_truth": "The Starter plan includes 10 GB of storage."
+  },
+  {
+    "id": "product_003",
+    "source_doc": "Product_Guide.pdf",
+    "question": "Which pricing tier includes HIPAA and GDPR BAA support?",
+    "ground_truth": "Only the Enterprise plan includes HIPAA/GDPR BAA (Business Associate Agreement) support."
+  },
+  {
+    "id": "product_004",
+    "source_doc": "Product_Guide.pdf",
+    "question": "What CRM tools does TechCorp's platform integrate with?",
+    "ground_truth": "TechCorp integrates with Salesforce, HubSpot, Zoho CRM, and Pipedrive."
+  },
+  {
+    "id": "tech_001",
+    "source_doc": "Technical_Handbook.pdf",
+    "question": "What HTTP error code is returned when the request rate limit is exceeded?",
+    "ground_truth": "HTTP 429 with error code RATE_LIMITED is returned when the request rate is exceeded."
+  },
+  {
+    "id": "tech_002",
+    "source_doc": "Technical_Handbook.pdf",
+    "question": "How long are refresh tokens valid for in TechCorp's OAuth 2.0 implementation?",
+    "ground_truth": "Refresh tokens are valid for 30 days."
+  },
+  {
+    "id": "tech_003",
+    "source_doc": "Technical_Handbook.pdf",
+    "question": "What is the maximum file size allowed for document ingestion via the API?",
+    "ground_truth": "The maximum file size for document ingestion is 50MB. Files larger than this should be compressed before uploading."
+  },
+  {
+    "id": "tech_004",
+    "source_doc": "Technical_Handbook.pdf",
+    "question": "After how many consecutive webhook delivery failures is the webhook automatically disabled?",
+    "ground_truth": "After 5 consecutive delivery failures, the webhook is automatically disabled and an alert email is sent."
+  },
+  {
+    "id": "faq_001",
+    "source_doc": "Customer_FAQ.pdf",
+    "question": "What is TechCorp's refund policy?",
+    "ground_truth": "TechCorp offers a full refund within 30 days of the initial purchase for all subscription plans. After 30 days, refunds are not issued for the current billing period."
+  },
+  {
+    "id": "faq_002",
+    "source_doc": "Customer_FAQ.pdf",
+    "question": "How long is customer data retained after account cancellation?",
+    "ground_truth": "After cancellation, data is retained for 90 days before permanent deletion, giving users time to export their data."
+  },
+  {
+    "id": "faq_003",
+    "source_doc": "Customer_FAQ.pdf",
+    "question": "How many failed login attempts cause an account lockout, and how long does the lockout last?",
+    "ground_truth": "Accounts are locked after 5 consecutive failed login attempts. The lockout period is 30 minutes."
+  },
+  {
+    "id": "compliance_001",
+    "source_doc": "Compliance_Guidelines.pdf",
+    "question": "How long does TechCorp retain audit logs?",
+    "ground_truth": "Audit logs are retained for 2 years, after which they are automatically deleted."
+  },
+  {
+    "id": "compliance_002",
+    "source_doc": "Compliance_Guidelines.pdf",
+    "question": "What encryption standard does TechCorp use for data at rest?",
+    "ground_truth": "TechCorp uses AES-256 encryption for all data at rest."
+  },
+  {
+    "id": "onboarding_001",
+    "source_doc": "Onboarding_Process.pdf",
+    "question": "What is the first week schedule for a new hire at TechCorp on Day 1?",
+    "ground_truth": "On Day 1, new hires attend a welcome breakfast and office tour with HR and the team (2 hours), then IT setup for laptop configuration and tool access (2 hours), followed by a 1:1 introductory meeting with their reporting manager (1 hour)."
+  },
+  {
+    "id": "onboarding_002",
+    "source_doc": "Onboarding_Process.pdf",
+    "question": "Who should a new employee contact for a security incident?",
+    "ground_truth": "For security incidents, employees should first contact security@techcorp.com. Escalation goes to the CISO David Chen, and the emergency channel is #911-sec on Slack."
+  }
+]
